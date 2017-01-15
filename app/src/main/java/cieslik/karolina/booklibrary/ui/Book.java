@@ -11,13 +11,10 @@ public class Book
     private String notes;
     private String cover;
     private int rate;
-    private int thumbnail;
 
-    public Book(String name, String numOfSongs, int thumbnail)
+    public Book(String isbn)
     {
-        this.title = name;
-        this.author = numOfSongs;
-        this.thumbnail = thumbnail;
+        this.isbn = isbn;
     }
 
     public Book(String id, String isbn, String title, String author, String publisher, String publishingYear, String notes, String
@@ -32,6 +29,15 @@ public class Book
         this.notes = notes;
         this.cover = cover;
         this.rate = rate;
+    }
+
+    public Book(String isbn, String title, String author, String publisher, String publishingYear)
+    {
+        this.isbn = isbn;
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.publishingYear = publishingYear;
     }
 
     public String getTitle()
@@ -52,16 +58,6 @@ public class Book
     public void setAuthor(String author)
     {
         this.author = author;
-    }
-
-    public int getThumbnail()
-    {
-        return thumbnail;
-    }
-
-    public void setThumbnail(int thumbnail)
-    {
-        this.thumbnail = thumbnail;
     }
 
     public String getId()

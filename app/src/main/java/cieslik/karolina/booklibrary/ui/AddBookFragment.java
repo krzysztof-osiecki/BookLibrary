@@ -18,36 +18,31 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.RatingBar;
 
-import java.util.List;
-
 import cieslik.karolina.booklibrary.R;
-import cieslik.karolina.booklibrary.database.Item;
-import cieslik.karolina.booklibrary.database.ItemList;
-import cieslik.karolina.booklibrary.database.VolumeInfo;
+import cieslik.karolina.booklibrary.utils.DeviceUtils;
 import cieslik.karolina.booklibrary.utils.StringLiterals;
 
 public class AddBookFragment extends Fragment
 {
     public static final String TAG = "AddBookFragment";
 
-    EditText mTitle;
-    EditText mAuthor;
-    EditText mIsbn;
-    EditText mPublisher;
-    EditText mPublishingYear;
-    EditText mNotes;
-    RatingBar mRatingBar;
-    TextInputLayout mTitleLayout;
-    TextInputLayout mAuthorLayout;
+    EditText title;
+    EditText author;
+    EditText isbn;
+    EditText publisher;
+    EditText publishingYear;
+    EditText notes;
+    RatingBar ratingBar;
+    TextInputLayout titleLayout;
+    TextInputLayout authorLayout;
+    TextInputLayout isbnLayout;
 
-    ItemList mItem;
-    String mIsbnCode;
+    Book book;
 
-    public static AddBookFragment newInstance(ItemList aItem, String aIsbn)
+    public static AddBookFragment newInstance(Book book)
     {
         AddBookFragment fragment = new AddBookFragment();
-        fragment.mItem = aItem;
-        fragment.mIsbnCode = aIsbn;
+        fragment.book = book;
         return fragment;
     }
 
@@ -67,35 +62,28 @@ public class AddBookFragment extends Fragment
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
-        mTitle = (EditText) view.findViewById(R.id.input_title);
-        mAuthor = (EditText) view.findViewById(R.id.input_author);
-        mIsbn = (EditText) view.findViewById(R.id.input_isbn);
-        mPublisher = (EditText) view.findViewById(R.id.input_publisher);
-        mPublishingYear = (EditText) view.findViewById(R.id.input_publishing_year);
-        mNotes = (EditText) view.findViewById(R.id.input_notes);
-        mRatingBar = (RatingBar) view.findViewById(R.id.rating_bar);
-        mTitleLayout = (TextInputLayout) view.findViewById(R.id.input_layout_title);
-        mAuthorLayout = (TextInputLayout) view.findViewById(R.id.input_layout_author);
-        mTitle.addTextChangedListener(new MyTextWatcher(mTitle));
-        mAuthor.addTextChangedListener(new MyTextWatcher(mAuthor));
+        title = (EditText) view.findViewById(R.id.input_title);
+        author = (EditText) view.findViewById(R.id.input_author);
+        isbn = (EditText) view.findViewById(R.id.input_isbn);
+        publisher = (EditText) view.findViewById(R.id.input_publisher);
+        publishingYear = (EditText) view.findViewById(R.id.input_publishing_year);
+        notes = (EditText) view.findViewById(R.id.input_notes);
+        ratingBar = (RatingBar) view.findViewById(R.id.rating_layout);
+        titleLayout = (TextInputLayout) view.findViewById(R.id.input_layout_title);
+        authorLayout = (TextInputLayout) view.findViewById(R.id.input_layout_author);
+        isbnLayout = (TextInputLayout) view.findViewById(R.id.input_layout_isbn);
+        title.addTextChangedListener(new MyTextWatcher(title));
+        author.addTextChangedListener(new MyTextWatcher(author));
+        isbn.addTextChangedListener(new MyTextWatcher(isbn));
 
-        if (mItem != null)
+        if (book != null)
         {
-            List<Item> items = mItem.getItems();
-            VolumeInfo volumeInfo = items.get(0).getVolumeInfo();
-
-            List<String> authors = volumeInfo.getAuthors();
-            String authorsString = StringLiterals.EMPTY_STRING;
-            for (String author : authors)
-            {
-                authorsString += author + " ,";
-            }
-            mAuthor.setText(authorsString);
-
-            mTitle.setText(volumeInfo.getTitle());
-            mPublisher.setText(volumeInfo.getPublisher());
-            mPublishingYear.setText(volumeInfo.getPublishedDate());
-            mIsbn.setText(mIsbnCode);
+            author.setText(book.getAuthor());
+            title.setText(book.getTitle());
+            publisher.setText(book.getPublisher());
+            publishingYear.setText(book.getPublishingYear());
+            isbn.setText(book.getIsbn());
+            ratingBar.setRating(book.getRate());
         }
 
         return view;
@@ -124,14 +112,14 @@ public class AddBookFragment extends Fragment
 
     private boolean validateTitle()
     {
-        if (mTitle.getText().toString().trim().isEmpty())
+        if (title.getText().toString().trim().isEmpty())
         {
-            mTitleLayout.setError(getString(R.string.err_title_msg));
-            requestFocus(mTitle);
+            titleLayout.setError(getString(R.string.err_title_msg));
+            requestFocus(title);
             return false;
         } else
         {
-            mTitleLayout.setErrorEnabled(false);
+            titleLayout.setErrorEnabled(false);
         }
 
         return true;
@@ -139,14 +127,29 @@ public class AddBookFragment extends Fragment
 
     private boolean validateAuthor()
     {
-        if (mAuthor.getText().toString().trim().isEmpty())
+        if (author.getText().toString().trim().isEmpty())
         {
-            mAuthorLayout.setError(getString(R.string.err_author_msg));
-            requestFocus(mAuthor);
+            authorLayout.setError(getString(R.string.err_author_msg));
+            requestFocus(author);
             return false;
         } else
         {
-            mAuthorLayout.setErrorEnabled(false);
+            authorLayout.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private boolean validateIsbn()
+    {
+        if (isbn.getText().toString().trim().isEmpty())
+        {
+            isbnLayout.setError(getString(R.string.err_isbn_msg));
+            requestFocus(isbn);
+            return false;
+        } else
+        {
+            isbnLayout.setErrorEnabled(false);
         }
 
         return true;
@@ -187,6 +190,9 @@ public class AddBookFragment extends Fragment
                 case R.id.input_author:
                     validateAuthor();
                     break;
+                case R.id.input_isbn:
+                    validateIsbn();
+                    break;
             }
         }
 
@@ -204,18 +210,39 @@ public class AddBookFragment extends Fragment
             return;
         }
 
-        String titleText = mTitle.getText().toString();
-        String authorText = mAuthor.getText().toString();
-        String isbnText = mIsbn.getText().toString();
-        String publisherText = mPublisher.getText().toString();
-        String publishingYearText = mPublishingYear.getText().toString();
+        if (!validateIsbn())
+        {
+            return;
+        }
 
-        String notesText = mNotes.getText().toString();
-        int rate = (int) mRatingBar.getRating();
+        String titleText = title.getText().toString();
+        String authorText = author.getText().toString();
+        String isbnText = isbn.getText().toString();
+        String publisherText = publisher.getText().toString();
+        String publishingYearText = publishingYear.getText().toString();
+        int rating = (int) ratingBar.getRating();
 
-        MainWindow.mDB.insertBook(titleText, authorText, isbnText, publisherText, publishingYearText, notesText,
-                StringLiterals.EMPTY_STRING, rate);
+        String notesText = notes.getText().toString();
 
+        Book book = MainWindow.mDB.selectBook(isbnText);
+        if (book == null)
+        {
+            MainWindow.mDB.insertBook(isbnText, titleText, authorText, publisherText, publishingYearText, notesText,
+                    StringLiterals.EMPTY_STRING, rating);
+        } else
+        {
+            MainWindow.mDB.updateBook(isbnText, titleText, authorText, publisherText, publishingYearText, notesText,
+                    book.getCover(), rating);
+        }
+
+        DeviceUtils.hideInputKeyboard(getView(), getActivity());
+
+        Fragment fragment = getFragmentManager().findFragmentById(R.id.content_main);
+        if (fragment instanceof BookListFragment)
+        {
+            BookListFragment bookListFragment = (BookListFragment) fragment;
+            bookListFragment.refreshView();
+        }
         getFragmentManager().popBackStack();
     }
 }

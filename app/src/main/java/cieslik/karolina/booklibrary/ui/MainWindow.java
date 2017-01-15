@@ -28,10 +28,14 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.List;
 
 import cieslik.karolina.booklibrary.R;
+import cieslik.karolina.booklibrary.database.Item;
 import cieslik.karolina.booklibrary.database.ItemList;
 import cieslik.karolina.booklibrary.database.MainDatabase;
+import cieslik.karolina.booklibrary.database.VolumeInfo;
+import cieslik.karolina.booklibrary.utils.StringLiterals;
 
 public class MainWindow extends AppCompatActivity
 {
@@ -152,14 +156,18 @@ public class MainWindow extends AppCompatActivity
         {
             if (result.getContents() == null)
             {
-                Log.d("MainActivity", "Cancelled scan");
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Nie zeskanowano kodu", Toast.LENGTH_LONG).show();
             } else
             {
-                Log.d("MainActivity", "Scanned");
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-                BookReaderProgress bookReaderProgress = new BookReaderProgress(result.getContents());
-                bookReaderProgress.execute();
+                Book book = mDB.selectBook(result.getContents());
+                if (book == null)
+                {
+                    BookReaderProgress bookReaderProgress = new BookReaderProgress(result.getContents());
+                    bookReaderProgress.execute();
+                } else
+                {
+                    Toast.makeText(this, "Ksiażka została już dodana", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
@@ -186,6 +194,12 @@ public class MainWindow extends AppCompatActivity
             {
                 return null;
             }
+            Book book = mDB.getBook(isbnCode);
+
+            if (book != null)
+            {
+                return null;
+            }
 
             String apiUrlString = "https://www.googleapis.com/books/v1/volumes?q=" + isbnCode +
                     "&fields=items(volumeInfo(authors,description,imageLinks,pageCount,publishedDate,publisher,subtitle,title))";
@@ -199,13 +213,11 @@ public class MainWindow extends AppCompatActivity
                     connection.setRequestMethod("GET");
                     connection.setReadTimeout(5000);
                     connection.setConnectTimeout(5000);
-                } catch (MalformedURLException e)
-                {
-                    e.printStackTrace();
-                } catch (ProtocolException e)
+                } catch (MalformedURLException | ProtocolException e)
                 {
                     e.printStackTrace();
                 }
+
                 int responseCode = connection.getResponseCode();
                 if (responseCode != 200)
                 {
@@ -241,11 +253,32 @@ public class MainWindow extends AppCompatActivity
         }
 
         @Override
-        protected void onPostExecute(ItemList responseJson)
+        protected void onPostExecute(ItemList itemList)
         {
+            Book book;
+
+            if (itemList != null && itemList.getItems().size() > 0)
+            {
+                List<Item> items = itemList.getItems();
+                VolumeInfo volumeInfo = items.get(0).getVolumeInfo();
+
+                List<String> authors = volumeInfo.getAuthors();
+                String authorsString = StringLiterals.EMPTY_STRING;
+                for (String author : authors)
+                {
+                    authorsString += author + " ";
+                }
+
+                book = new Book(isbnCode, volumeInfo.getTitle(), authorsString, volumeInfo.getPublisher(),
+                        volumeInfo.getPublishedDate());
+            } else
+            {
+                book = new Book(isbnCode);
+            }
+
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            AddBookFragment fragment = AddBookFragment.newInstance(responseJson, isbnCode);
+            AddBookFragment fragment = AddBookFragment.newInstance(book);
             fragmentTransaction.add(R.id.main_content, fragment);
             fragmentTransaction.addToBackStack(AddBookFragment.TAG);
             fragmentTransaction.commit();

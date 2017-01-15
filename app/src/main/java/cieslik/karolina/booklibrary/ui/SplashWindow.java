@@ -8,6 +8,9 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 import cieslik.karolina.booklibrary.R;
 
@@ -26,6 +29,16 @@ public class SplashWindow extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        ImageView splashImageView = (ImageView) findViewById(R.id.splash_image_view);
+
+        try
+        {
+            Glide.with(this).load(R.drawable.splash).into(splashImageView);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
         new Handler().postDelayed(new Runnable()
         {
@@ -66,8 +79,8 @@ public class SplashWindow extends AppCompatActivity
                         // app-defined int constant. The callback method gets the
                         // result of the request.
                     }
-                }
-                else {
+                } else
+                {
                     Intent i = new Intent(SplashWindow.this, MainWindow.class);
                     startActivity(i);
 
