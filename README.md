@@ -15,5 +15,5 @@ Przewidywane funkcjonalności aplikacji to:
 Rozwój:
 - rozwinięcie użycia API Google (wyszukiwanie po innych elementach niz ISBN, z wyświetleniem listy znalezionych rozwiązań)
 - wyszukiwanie okladek
-- integracja z google books
+- integracja z google books (https://developer.android.com/training/id-auth/authenticate.html, https://developers.google.com/books/docs/v1/reference/bookshelves)
 - sortowanie książek
