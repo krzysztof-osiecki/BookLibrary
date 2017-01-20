@@ -6,10 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import cieslik.karolina.booklibrary.ui.Book;
 
 import java.util.ArrayList;
-
-import cieslik.karolina.booklibrary.ui.Book;
 
 public class MainDatabase
 {
@@ -111,7 +110,7 @@ public class MainDatabase
     public boolean updateBook(String isbn, String title, String author, String publisher, String publishingYear, String notes,
                               String cover, int rate)
     {
-        String where = BookLiterals.BOOK_ISBN + "=" + isbn;
+        String where = BookLiterals.BOOK_ISBN + "= '" + isbn + "'";
 
         ContentValues updateBook = new ContentValues();
         updateBook.put(BookLiterals.BOOK_ISBN, isbn);
@@ -127,7 +126,7 @@ public class MainDatabase
 
     public boolean deleteBook(String isbn)
     {
-        String where = BookLiterals.BOOK_ISBN + "=" + isbn;
+        String where = BookLiterals.BOOK_ISBN + "= '" + isbn + "'";
         return database.delete(BookLiterals.BOOK_TABLE_NAME, where, null) > 0;
     }
 
@@ -181,7 +180,7 @@ public class MainDatabase
                 BookLiterals.BOOK_COVER,
                 BookLiterals.BOOK_RATE};
 
-        String where = BookLiterals.BOOK_ISBN + "=" + aIsbn;
+        String where = BookLiterals.BOOK_ISBN + "= '" + aIsbn + "'";
         Cursor cursor = database.query(BookLiterals.BOOK_TABLE_NAME, columns, where, null, null, null, null);
         Book book = null;
         if (cursor != null && cursor.moveToFirst())

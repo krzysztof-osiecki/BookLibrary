@@ -17,10 +17,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.RatingBar;
-
 import cieslik.karolina.booklibrary.R;
 import cieslik.karolina.booklibrary.utils.DeviceUtils;
-import cieslik.karolina.booklibrary.utils.StringLiterals;
 
 public class AddBookFragment extends Fragment
 {
@@ -228,7 +226,7 @@ public class AddBookFragment extends Fragment
         if (book == null)
         {
             MainWindow.mDB.insertBook(isbnText, titleText, authorText, publisherText, publishingYearText, notesText,
-                    StringLiterals.EMPTY_STRING, rating);
+                    MainWindow.COVERS_CACHE.get(isbnText), rating);
         } else
         {
             MainWindow.mDB.updateBook(isbnText, titleText, authorText, publisherText, publishingYearText, notesText,
