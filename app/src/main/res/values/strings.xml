@@ -22,4 +22,6 @@
     <string name="PUBLISHING_DATE">Data wydania</string>
     <string name="NOTES">Notatki</string>
     <string name="SEARCH">Szukaj</string>
+    <string name="BOOK_EXISTS">Ksiażka została już dodana</string>
+    <string name="CODE_NOT_SCANNED">Nie zeskanowano kodu</string>
 </resources>

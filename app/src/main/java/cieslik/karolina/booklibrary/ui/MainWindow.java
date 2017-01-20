@@ -136,14 +136,14 @@ public class MainWindow extends AppCompatActivity {
     IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
     if (result != null) {
       if (result.getContents() == null) {
-        Toast.makeText(this, "Nie zeskanowano kodu", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getText(R.string.CODE_NOT_SCANNED), Toast.LENGTH_LONG).show();
       } else {
         Book book = mDB.selectBook(result.getContents());
         if (book == null) {
           BookReaderProgress bookReaderProgress = new BookReaderProgress(result.getContents());
           bookReaderProgress.execute();
         } else {
-          Toast.makeText(this, "Ksiażka została już dodana", Toast.LENGTH_LONG).show();
+          Toast.makeText(this, getText(R.string.BOOK_EXISTS), Toast.LENGTH_LONG).show();
         }
       }
     }
@@ -183,7 +183,8 @@ public class MainWindow extends AppCompatActivity {
           connection.setReadTimeout(5000);
           connection.setConnectTimeout(5000);
         } catch (MalformedURLException | ProtocolException e) {
-          e.printStackTrace();
+          Log.w("BookLibrary", "Request to google api was incorrect", e);
+          return null;
         }
 
         int responseCode = connection.getResponseCode();
@@ -207,11 +208,10 @@ public class MainWindow extends AppCompatActivity {
         connection.disconnect();
         return item;
       } catch (SocketTimeoutException e) {
-        Log.w(getClass().getName(), "Connection timed out. Returning null");
+        Log.w(getClass().getName(), "Connection timed out. Returning null", e);
         return null;
       } catch (IOException e) {
-        Log.d(getClass().getName(), "IOException when connecting to Google Books API.");
-        e.printStackTrace();
+        Log.d(getClass().getName(), "IOException when connecting to Google Books API.", e);
         return null;
       }
     }
