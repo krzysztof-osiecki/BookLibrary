@@ -15,3 +15,4 @@ Przewidywane funkcjonalności aplikacji to:
 Rozwój:
 - rozwinięcie użycia API Google (wyszukiwanie po innych elementach niz ISBN, z wyświetleniem listy znalezionych rozwiązań)
 - wyszukiwanie okladek (na przykład https://openlibrary.org/dev/docs/api/covers)
+- sortowanie książek
