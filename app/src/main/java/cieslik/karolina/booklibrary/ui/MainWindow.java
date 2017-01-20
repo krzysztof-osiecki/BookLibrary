@@ -93,16 +93,15 @@ public class MainWindow extends AppCompatActivity {
   }
 
   private void openBarcodeScanner() {
+
     if (ContextCompat.checkSelfPermission(MainWindow.this,
         Manifest.permission.CAMERA)
         != PackageManager.PERMISSION_GRANTED) {
       if (ActivityCompat.shouldShowRequestPermissionRationale(MainWindow.this,
           Manifest.permission.CAMERA)) {
-
         // Show an explanation to the user *asynchronously* -- don't block
         // this thread waiting for the user's response! After the user
         // sees the explanation, try again to request the permission.
-
       } else {
         ActivityCompat.requestPermissions(MainWindow.this,
             new String[]{Manifest.permission.CAMERA},
@@ -119,7 +118,6 @@ public class MainWindow extends AppCompatActivity {
       case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
         if (grantResults.length > 0
             && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
           new IntentIntegrator(this).initiateScan();
 
         } else {
