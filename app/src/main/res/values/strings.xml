@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">BookLibrary</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="action_delete">Usuń</string>
+    <string name="action_edit">Edytuj</string>
+    <string name="action_add_cover">Dodaj okładkę</string>
+    <string name="backdrop_title">LOVE BOOKS</string>
+    <string name="backdrop_subtitle">Your own book library</string>
+    <string name="title">Tytuł</string>
+    <string name="author">Autor</string>
+    <string name="publisher">Wydawnictwo</string>
+    <string name="publishing_year">Rok wydania</string>
+    <string name="notes">Notatki</string>
+    <string name="isbn">ISBN</string>
+    <string name="save">Zapisz</string>
+    <string name="err_title_msg">Podaj tytuł książki</string>
+    <string name="err_author_msg">Podaj autora książki</string>
+    <string name="err_isbn_msg">Podaj isbn książki</string>
+    <string name="TITLE">Tytuł</string>
+    <string name="AUTHOR">Autor</string>
+    <string name="PUBLISHER">Wydawnictwo</string>
+    <string name="PUBLISHING_DATE">Data wydania</string>
+    <string name="NOTES">Notatki</string>
+    <string name="SEARCH">Szukaj</string>
+    <string name="BOOK_EXISTS">Ksiażka została już dodana</string>
+    <string name="CODE_NOT_SCANNED">Nie zeskanowano kodu</string>
 </resources>
