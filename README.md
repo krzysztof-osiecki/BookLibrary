@@ -7,6 +7,10 @@ Przewidywane funkcjonalności aplikacji to:
 - manualne dodawanie książek na podstawie tytułu
 - proponowanie okładki dla dodawanej ksiązki
 - możliwość dodania okładki ze zdjęcia
-- lista książek oferująca filtrowanie i sortowanie
+- lista książek oferująca filtrowanie
 - możliwość zapisania oceny i notatki na temat książki
 - tagowanie (kategoryzacja) książek
+
+
+Rozwój:
+- rozwinięcie użycia API Google (wyszukiwanie po innych elementach niz ISBN, z wyświetleniem listy znalezionych rozwiązań)
