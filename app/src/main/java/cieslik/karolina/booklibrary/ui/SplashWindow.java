@@ -8,21 +8,18 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
 import cieslik.karolina.booklibrary.R;
 
-/**
- * Created by Karolina on 19.11.2016.
- */
 
 public class SplashWindow extends AppCompatActivity
 {
-    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
-    // Splash screen timer
-    private static int SPLASH_TIME_OUT = 3000;
+    private static final int REQUEST_CODE_READ_CONTACTS = 1;
+    private static final int SPLASH_TIME_OUT = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,49 +39,24 @@ public class SplashWindow extends AppCompatActivity
 
         new Handler().postDelayed(new Runnable()
         {
-
-            /*
-             * Showing splash screen with a timer. This will be useful when you
-             * want to show case your app logo / company
-             */
-
             @Override
             public void run()
             {
-                // Here, thisActivity is the current activity
                 if (ContextCompat.checkSelfPermission(SplashWindow.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED)
                 {
+                    ActivityCompat.requestPermissions(SplashWindow.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
+                            REQUEST_CODE_READ_CONTACTS);
 
-                    // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(SplashWindow.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE))
-                    {
-
-                        // Show an explanation to the user *asynchronously* -- don't block
-                        // this thread waiting for the user's response! After the user
-                        // sees the explanation, try again to request the permission.
-
-                    } else
-                    {
-
-                        // No explanation needed, we can request the permission.
-
-                        ActivityCompat.requestPermissions(SplashWindow.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-
-                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                        // app-defined int constant. The callback method gets the
-                        // result of the request.
-                    }
+                    // REQUEST_CODE_READ_CONTACTS is an
+                    // app-defined int constant. The callback method gets the
+                    // result of the request.
                 } else
                 {
                     Intent i = new Intent(SplashWindow.this, MainWindow.class);
                     startActivity(i);
-
-                    // close this activity
                     finish();
                 }
             }
@@ -96,27 +68,28 @@ public class SplashWindow extends AppCompatActivity
     {
         switch (requestCode)
         {
-            case MY_PERMISSIONS_REQUEST_READ_CONTACTS:
+            case REQUEST_CODE_READ_CONTACTS:
             {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                        grantResults[1] == PackageManager.PERMISSION_GRANTED)
                 {
-
                     Intent i = new Intent(SplashWindow.this, MainWindow.class);
                     startActivity(i);
-
                     // close this activity
                     finish();
-
                 } else
                 {
+                    Log.i(this.getClass().getName(),
+                            "Permission denied, boo! Disable the functionality that depends on this permission.");
+                    finish();
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
+            default:
+                Log.i(this.getClass().getName(), "Unsupported request code: " + requestCode);
         }
     }
 }

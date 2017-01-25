@@ -1,9 +1,12 @@
 package cieslik.karolina.booklibrary.ui;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +16,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -53,6 +59,7 @@ public class BookListFragment extends Fragment implements View.OnClickListener, 
     public static final String TAG = "BookListFragment";
     private static final int REQUEST_CODE_TAKE_PICTURE = 1;
     private static final int REQUEST_CODE_SELECT_PICTURE = 100;
+    private static final int REQUEST_CODE_READ_CONTACTS = 2;
 
     private BooksAdapter adapter;
     private List<Book> bookList;
@@ -245,11 +252,7 @@ public class BookListFragment extends Fragment implements View.OnClickListener, 
                     return true;
                 case R.id.action_add_cover:
                     selectedBook = book;
-                    openImageChooser();
-                    return true;
-                case R.id.action_add_photo:
-                    selectedBook = book;
-                    openCamera();
+                    showDialog();
                     return true;
                 default:
             }
@@ -258,16 +261,62 @@ public class BookListFragment extends Fragment implements View.OnClickListener, 
 
     }
 
+    private void showDialog()
+    {
+        CharSequence options[] = new CharSequence[]{getString(R.string.GALLERY), getString(R.string.CAMERA)};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.CHOOSE_PICTURE));
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                switch (which)
+                {
+                    case 0:
+                        openImageChooser();
+                        break;
+                    case 1:
+                        tryOpenCamera();
+                        break;
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void tryOpenCamera()
+    {
+        if (ContextCompat.checkSelfPermission(this.getActivity(),
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this.getActivity(),
+                    new String[]{Manifest.permission.CAMERA},
+                    REQUEST_CODE_READ_CONTACTS);
+
+        } else
+        {
+            openCamera();
+        }
+    }
+
     private void openCamera()
     {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File imageFile = createImageFile();
-        if (imageFile != null)
+        try
         {
-            Uri uriForFile = Uri.fromFile(imageFile);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uriForFile);
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File imageFile = createImageFile();
+            if (imageFile != null)
+            {
+                Uri uriForFile = Uri.fromFile(imageFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriForFile);
+            }
+            startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
+        } catch (Throwable t)
+        {
+            Log.i("Book", t.getMessage());
         }
-        startActivityForResult(intent, REQUEST_CODE_TAKE_PICTURE);
     }
 
     /* Choose an image from Gallery */
@@ -277,6 +326,27 @@ public class BookListFragment extends Fragment implements View.OnClickListener, 
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_CODE_SELECT_PICTURE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
+        switch (requestCode)
+        {
+            case REQUEST_CODE_READ_CONTACTS:
+            {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    openCamera();
+
+                } else
+                {
+                    //TODO pokaz dialog ze nie przyznal
+                }
+                return;
+            }
+        }
     }
 
     @Override

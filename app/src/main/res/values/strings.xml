@@ -24,4 +24,7 @@
     <string name="SEARCH">Szukaj</string>
     <string name="BOOK_EXISTS">Ksiażka została już dodana</string>
     <string name="CODE_NOT_SCANNED">Nie zeskanowano kodu</string>
+    <string name="CHOOSE_PICTURE">Wybierz zdjęcie</string>
+    <string name="GALLERY">galeria</string>
+    <string name="CAMERA">aparat</string>
 </resources>
