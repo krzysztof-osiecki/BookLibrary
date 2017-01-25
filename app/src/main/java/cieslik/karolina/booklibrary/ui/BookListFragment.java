@@ -263,10 +263,10 @@ public class BookListFragment extends Fragment implements View.OnClickListener, 
 
     private void showDialog()
     {
-        CharSequence options[] = new CharSequence[]{"galeria", "aparat"};
+        CharSequence options[] = new CharSequence[]{getString(R.string.GALLERY), getString(R.string.CAMERA)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Wybierz opcję");
+        builder.setTitle(getString(R.string.CHOOSE_PICTURE));
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which)
