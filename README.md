@@ -17,3 +17,7 @@ Rozwój:
 - wyszukiwanie okladek
 - integracja z google books (https://developer.android.com/training/id-auth/authenticate.html, https://developers.google.com/books/docs/v1/reference/bookshelves)
 - sortowanie książek
+- autocomplete przy dodawaniu ksiazki (na podstawie dodanych autorów/wydawnictw)
+- prezentacja okladek z googla (?) jakis sposob wyboru okladki przy dodawaniu ksiazki
+- alternatywne api przy blednym wyniku wyszukiwania (?) googlowe na 19 ksiazek znalazlo z 10 (zwlaszcza problemy z "innymi wydaniami"
+- poprawki ui (niewidoczny guzik menu na itemie w prawym dolnym rogu)
